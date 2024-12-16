@@ -1,4 +1,5 @@
 import { Flex, Image, Progress, Rate, Tag, Typography } from 'antd'
+import { format } from 'date-fns'
 import { useGenres } from '../../../context/GenresContext'
 
 const { Title, Text } = Typography
@@ -34,10 +35,14 @@ export default function MovieCard({ movie, rateMovie }) {
 		return '#66E900'
 	}
 
-	const formatReleaseDate = dateString => {
-		const date = new Date(dateString)
-		const options = { year: 'numeric', month: 'long', day: 'numeric' }
-		return Intl.DateTimeFormat('en-US', options).format(date)
+	const formatDate = date => {
+		if (!date) return 'January 1, 2015'
+		try {
+			return format(new Date(date), 'MMMM d, yyyy')
+		} catch (error) {
+			console.error('Invalid date:', error)
+			return 'Invalid date'
+		}
 	}
 
 	return (
@@ -82,9 +87,7 @@ export default function MovieCard({ movie, rateMovie }) {
 								format={percent => (percent / 10).toFixed(1)}
 							/>
 						</Flex>
-						<Text type='secondary'>
-							{formatReleaseDate(movie.release_date)}
-						</Text>
+						<Text type='secondary'>{formatDate(movie.release_date)}</Text>
 						<Flex
 							wrap
 							gap='5px 0'

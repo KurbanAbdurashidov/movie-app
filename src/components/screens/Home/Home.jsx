@@ -62,10 +62,10 @@ export default function Home() {
 			const response = await fetch(
 				`https://api.themoviedb.org/3/guest_session/${guestSessionId}/rated/movies?api_key=${API_KEY}`
 			)
-			if (!response.ok) throw Error(`Ошибка! ${response.status}`)
+			if (!response.ok)
+				throw Error(`Ошибка рейтинга фильма: ${response.status}`)
 			const data = await response.json()
 			setRatedMovies(data.results || [])
-			setTotalMovies(data.total_results || 0)
 		} catch (error) {
 			console.error(error)
 		} finally {
