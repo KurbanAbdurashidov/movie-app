@@ -1,11 +1,12 @@
 import { Flex, Image, Progress, Rate, Tag, Typography } from 'antd'
 import { format } from 'date-fns'
-import { useGenres } from '../../../context/GenresContext'
+import { useGenres, useRatings } from '../../../context/AppContext'
 
 const { Title, Text } = Typography
 
 export default function MovieCard({ movie, rateMovie }) {
 	const genres = useGenres()
+	const { ratings, setRating } = useRatings()
 
 	const movieGenres = movie.genre_ids
 		.map(genreId => genres.find(genre => genre.id === genreId)?.name)
@@ -25,6 +26,7 @@ export default function MovieCard({ movie, rateMovie }) {
 	}
 
 	const handleRate = value => {
+		setRating(movie.id, value)
 		rateMovie(movie.id, value)
 	}
 
@@ -112,6 +114,7 @@ export default function MovieCard({ movie, rateMovie }) {
 						defaultValue={movie.rating || 0}
 						onChange={handleRate}
 						count={10}
+						value={ratings[movie.id] || 0}
 						style={{
 							margin: 10,
 							width: '100%',

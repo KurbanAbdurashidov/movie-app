@@ -1,9 +1,11 @@
 import { createContext, useContext, useEffect, useState } from 'react'
 
 const GenresContext = createContext()
+const RatingContext = createContext()
 
-export default function GenresProvider({ children }) {
+export default function AppProvider({ children }) {
 	const [genres, setGenres] = useState([])
+	const [ratings, setRatings] = useState({})
 	const API_KEY = '893dbe0fab5554f9ef346ade4c676aa3'
 
 	useEffect(() => {
@@ -22,9 +24,21 @@ export default function GenresProvider({ children }) {
 		fetchGenres()
 	}, [])
 
+	const setRating = (movieId, rating) => {
+		setRatings(prev => ({
+			...prev,
+			[movieId]: rating
+		}))
+	}
+
 	return (
-		<GenresContext.Provider value={genres}>{children}</GenresContext.Provider>
+		<GenresContext.Provider value={genres}>
+			<RatingContext.Provider value={{ ratings, setRating }}>
+				{children}
+			</RatingContext.Provider>
+		</GenresContext.Provider>
 	)
 }
 
 export const useGenres = () => useContext(GenresContext)
+export const useRatings = () => useContext(RatingContext)
