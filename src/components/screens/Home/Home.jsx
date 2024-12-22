@@ -14,6 +14,7 @@ export default function Home() {
 	const [searchQuery, setSearchQuery] = useState('')
 	const [guestSessionId, setGuestSessionId] = useState(null)
 	const [activeTab, setActiveTab] = useState('search')
+	const [moviesCache, setMoviesCache] = useState({})
 
 	const API_KEY = '893dbe0fab5554f9ef346ade4c676aa3'
 	const MOVIES_PER_PAGE = 20
@@ -32,6 +33,13 @@ export default function Home() {
 	}
 
 	const fetchMovies = async (query = '', page = 1) => {
+		const cacheKey = `${query || 'trending'}-${page}`
+		if (moviesCache[cacheKey]) {
+			setMovies(moviesCache[cacheKey].movies)
+			setTotalMovies(moviesCache[cacheKey].totalMovies)
+			return
+		}
+
 		setLoading(true)
 		setError(null)
 
@@ -45,6 +53,14 @@ export default function Home() {
 			const data = await response.json()
 			setMovies(data.results || [])
 			setTotalMovies(data.total_results || 0)
+
+			setMoviesCache(prevCache => ({
+				...prevCache,
+				[cacheKey]: {
+					movies: data.results,
+					totalMovies: data.total_results
+				}
+			}))
 		} catch (error) {
 			setError(error.message)
 		} finally {
